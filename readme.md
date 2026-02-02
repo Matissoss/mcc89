@@ -15,7 +15,7 @@ just build
 
 Or:
 ```sh
-cc src/*.c -o mcc89 --std=c89
+cc src/*.c -o mcc89 -std=c89 -pedantic
 ```
 
 ## development roadmap
