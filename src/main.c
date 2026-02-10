@@ -21,7 +21,7 @@ int main(int argv, char **argc) {
     argtable[1] = &input;
     argtable[2] = &help;
     argtable[3] = &version;
-    
+
     errbuf = parse_args(argtable, 4, argv, argc);
 
     if (errbuf.len) {

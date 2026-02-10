@@ -5,4 +5,4 @@ clean:
 
 build: clean
         @mkdir target
-        @cc -std=c89 -pedantic src/*.c -o target/mcc89
+        @cc -std=c89 -pedantic -Wall -Werror src/*.c -o target/mcc89
