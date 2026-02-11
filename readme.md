@@ -15,7 +15,7 @@ just build
 
 Or:
 ```sh
-cc src/*.c -o mcc89 -std=c89 -pedantic
+cc src/*.c -o mcc89 -std=c89 -pedantic -Wall -Werror
 ```
 
 ## development roadmap
@@ -27,15 +27,27 @@ Goals:
 - Full compilation process
 - Emiting x86-64 assembly
 
+Tasks:
 - [ ] Tokenizer
 - [ ] Lexer
-- [ ] Merger (converting Lexer tokens into AST)
+- [ ] Parser
 - [ ] Checker
-- [ ] Converting code into x86-64 assembly
+- [ ] Conversion into IR
+- [ ] Converting IR into x86-64 assembly
 
 ### v0.2
 
-TBD
+Goals:
+- Support for `static`s
+- Support for `struct`s, `enum`s, `union`s
+- Support more complex types (such as `int *(*t[3])(char)`)
+- Support for preprocessor's directives (`#include`, `#ifdef`, `#ifndef`, `#define`, etc.) 
+- Allow compiler to finally make use of system's `libc`
+
+### v0.3
+Goals:
+- First simple optimizations
+- TBD
 
 ## credits
 
