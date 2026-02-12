@@ -10,107 +10,13 @@
 
 enum current_type {
     CT_NONE,
-    /* a, Z, 0, 9 */
+    /* a-z, A-Z, 0-9 */
     CT_ALNUM,
-    /* like ' ' */
+    /* Whitespace ' ' */
     CT_WS,
     /* like '=', '.', '-', '>' */
     CT_OTHER
 };
-
-void print_operator(enum operator* operator) {
-    if (!operator) return;
-    switch (*operator) {
-        case OP_NONE: break;
-        case OP_ARROW: printf("->"); break;
-        case OP_ASSIGN: printf("="); break;
-        case OP_ADD: printf("+"); break;
-        case OP_SUB: printf("-"); break;
-        case OP_MUL: printf("*"); break;
-        case OP_DIV: printf("/"); break;
-        case OP_MOD: printf("%%"); break;
-        case OP_AND: printf("&"); break;
-        case OP_OR : printf("|"); break;
-        case OP_XOR: printf("^"); break;
-        case OP_NEG: printf("!"); break;
-        case OP_LSH: printf("<<"); break;
-        case OP_RSH: printf(">>"); break;
-        case OP_ADDASSIGN: printf("+="); break;
-        case OP_SUBASSIGN: printf("-="); break;
-        case OP_MULASSIGN: printf("*="); break;
-        case OP_DIVASSIGN: printf("/="); break;
-        case OP_MODASSIGN: printf("%%="); break;
-        case OP_ANDASSIGN: printf("&="); break;
-        case OP_ORASSIGN: printf("|="); break;
-        case OP_XORASSIGN: printf("^="); break;
-        case OP_LSHASSIGN: printf("<<="); break;
-        case OP_RSHASSIGN: printf(">>="); break;
-        
-        case OP_LT: printf("<"); break;
-        case OP_GT: printf(">"); break;
-        case OP_EQ: printf("=="); break;
-        case OP_NEGASSIGN: printf("!="); break;
-        case OP_GTE: printf(">="); break;
-        case OP_LTE: printf("<="); break;
-        case OP_CMP_AND: printf("&&"); break;
-        case OP_CMP_OR: printf("||"); break;
-        case OP_DOT: printf("."); break;
-        case OP_QM: printf("?"); break;
-        case OP_COLON: printf(","); break;
-    }
-}
-
-void print_token(struct token* token) {
-    if (!token) return;
-    switch (token->type) {
-        case TOKEN_STRING:
-            printf("String(\"");
-            str_t_print(&token->content.v_string);
-            printf("\")");
-            break;
-        case TOKEN_WHITESPACE:
-            printf("Whitespace(%ld)", token->content.v_whitespace);
-            break;
-        case TOKEN_PARAM_OPEN:
-            printf("ParamOpen");
-            break;
-        case TOKEN_PARAM_CLOSE:
-            printf("ParamClose");
-            break;
-        case TOKEN_SQUARE_OPEN:
-            printf("SquareOpen");
-            break;
-        case TOKEN_SQUARE_CLOSE:
-            printf("SquareClose");
-            break;
-        case TOKEN_BRACE_OPEN:
-            printf("BraceOpen");
-            break;
-        case TOKEN_BRACE_CLOSE:
-            printf("BraceClose");
-            break;
-        case TOKEN_STRING_QUOTE:
-            printf("StringQuote");
-            break;
-        case TOKEN_CHAR_QUOTE:
-            printf("CharQuote");
-            break;
-        case TOKEN_COMMA:
-            printf("Comma");
-            break;
-        case TOKEN_SEMICOLON:
-            printf("Semicolon");
-            break;
-        case TOKEN_ENDL:
-            printf("Endline");
-            break;
-        case TOKEN_OPERATOR:
-            printf("Operator(");
-            print_operator(&token->content.v_operator);
-            printf(")");
-            break;
-    }
-}
 
 static struct token operator(char* strslice, unsigned long len) {
     struct token token;
@@ -481,6 +387,100 @@ struct token_vec tokenizer(char* file, unsigned long len) {
         }
     }
     return token_vec;
+}
+
+void operator_print(enum operator* operator) {
+    if (!operator) return;
+    switch (*operator) {
+        case OP_NONE: break;
+        case OP_ARROW: printf("->"); break;
+        case OP_ASSIGN: printf("="); break;
+        case OP_ADD: printf("+"); break;
+        case OP_SUB: printf("-"); break;
+        case OP_MUL: printf("*"); break;
+        case OP_DIV: printf("/"); break;
+        case OP_MOD: printf("%%"); break;
+        case OP_AND: printf("&"); break;
+        case OP_OR : printf("|"); break;
+        case OP_XOR: printf("^"); break;
+        case OP_NEG: printf("!"); break;
+        case OP_LSH: printf("<<"); break;
+        case OP_RSH: printf(">>"); break;
+        case OP_ADDASSIGN: printf("+="); break;
+        case OP_SUBASSIGN: printf("-="); break;
+        case OP_MULASSIGN: printf("*="); break;
+        case OP_DIVASSIGN: printf("/="); break;
+        case OP_MODASSIGN: printf("%%="); break;
+        case OP_ANDASSIGN: printf("&="); break;
+        case OP_ORASSIGN: printf("|="); break;
+        case OP_XORASSIGN: printf("^="); break;
+        case OP_LSHASSIGN: printf("<<="); break;
+        case OP_RSHASSIGN: printf(">>="); break;
+        
+        case OP_LT: printf("<"); break;
+        case OP_GT: printf(">"); break;
+        case OP_EQ: printf("=="); break;
+        case OP_NEGASSIGN: printf("!="); break;
+        case OP_GTE: printf(">="); break;
+        case OP_LTE: printf("<="); break;
+        case OP_CMP_AND: printf("&&"); break;
+        case OP_CMP_OR: printf("||"); break;
+        case OP_DOT: printf("."); break;
+        case OP_QM: printf("?"); break;
+        case OP_COLON: printf(","); break;
+    }
+}
+
+void token_print(struct token* token) {
+    if (!token) return;
+    switch (token->type) {
+        case TOKEN_STRING:
+            printf("String(\"");
+            str_t_print(&token->content.v_string);
+            printf("\")");
+            break;
+        case TOKEN_WHITESPACE:
+            printf("Whitespace(%ld)", token->content.v_whitespace);
+            break;
+        case TOKEN_PARAM_OPEN:
+            printf("ParamOpen");
+            break;
+        case TOKEN_PARAM_CLOSE:
+            printf("ParamClose");
+            break;
+        case TOKEN_SQUARE_OPEN:
+            printf("SquareOpen");
+            break;
+        case TOKEN_SQUARE_CLOSE:
+            printf("SquareClose");
+            break;
+        case TOKEN_BRACE_OPEN:
+            printf("BraceOpen");
+            break;
+        case TOKEN_BRACE_CLOSE:
+            printf("BraceClose");
+            break;
+        case TOKEN_STRING_QUOTE:
+            printf("StringQuote");
+            break;
+        case TOKEN_CHAR_QUOTE:
+            printf("CharQuote");
+            break;
+        case TOKEN_COMMA:
+            printf("Comma");
+            break;
+        case TOKEN_SEMICOLON:
+            printf("Semicolon");
+            break;
+        case TOKEN_ENDL:
+            printf("Endline");
+            break;
+        case TOKEN_OPERATOR:
+            printf("Operator(");
+            operator_print(&token->content.v_operator);
+            printf(")");
+            break;
+    }
 }
 
 /* token_vec impls */

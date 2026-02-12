@@ -28,7 +28,7 @@ Goals:
 - Emiting x86-64 assembly
 
 Tasks:
-- [ ] Tokenizer
+- [x] Tokenizer
 - [ ] Lexer
 - [ ] Parser
 - [ ] Checker
@@ -41,13 +41,20 @@ Goals:
 - Support for `static`s
 - Support for `struct`s, `enum`s, `union`s
 - Support more complex types (such as `int *(*t[3])(char)`)
-- Support for preprocessor's directives (`#include`, `#ifdef`, `#ifndef`, `#define`, etc.) 
-- Allow compiler to finally make use of system's `libc`
 
 ### v0.3
 Goals:
-- First simple optimizations
+
+- Support for preprocessor (`#include`, `#ifdef`, `#ifndef`, `#define`, etc.) 
+- Support for `va_list`s (and `...`)
+- Allow compiler to finally make use of system's `libc`
 - TBD
+
+### v0.4
+
+Goals:
+
+- First optimizations (full list of them is TBD)
 
 ## credits
 

@@ -10,7 +10,7 @@ void start_processing(char *raw_file, unsigned long len) {
     int i;
     tokens = tokenizer(raw_file, len);
     for (i = 0; i < tokens.len; i++) {
-        print_token(&tokens.ptr[i]);
+        token_print(&tokens.ptr[i]);
         if (i == tokens.len - 1) printf("\n");
         else printf(", ");
     }
