@@ -88,9 +88,10 @@ struct token_vec {
 	unsigned long capacity;
 };
 
-int print_token(struct token* token);
+void print_operator(enum operator* operator);
+void print_token(struct token* token);
 
-struct token_vec tokenizer(char* file, unsigned long len);
+struct token_vec tokenizer(char* strslice, unsigned long len);
 
 struct token token_vec_pop(struct token_vec* self);
 int token_vec_push(struct token_vec* self, struct token token);
