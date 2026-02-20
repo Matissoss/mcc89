@@ -4,6 +4,7 @@
  */
 #include "mcc89.h"
 #include "tokenizer.h"
+#include "lexer.h"
 
 void start_processing(char *raw_file, unsigned long len) {    
     struct token_vec tokens;

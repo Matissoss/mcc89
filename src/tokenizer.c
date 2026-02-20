@@ -2,6 +2,7 @@
  * made by matyz
  * licensed under MPL 2.0
  */
+
 #include "tokenizer.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -20,170 +21,11 @@ enum current_type {
 
 static struct token operator(char* strslice, unsigned long len) {
     struct token token;
+    str_t s;
+    s.ptr = strslice;
+    s.len = len;
     token.type = TOKEN_OPERATOR;
-    token.content.v_operator = OP_NONE;
-    if (len == 1) {
-        switch (strslice[0]) {
-            case '=':
-                token.content.v_operator = OP_ASSIGN;
-                break;
-            case '<':
-                token.content.v_operator = OP_LT;
-                break;
-            case '>':
-                token.content.v_operator = OP_GT;
-                break;
-            case '^':
-                token.content.v_operator = OP_XOR;
-                break;
-            case '+':
-                token.content.v_operator = OP_ADD;
-                break;
-            case '-':
-                token.content.v_operator = OP_SUB;
-                break;
-            case '*':
-                token.content.v_operator = OP_MUL;
-                break;
-            case '/':
-                token.content.v_operator = OP_DIV;
-                break;
-            case '%':
-                token.content.v_operator = OP_MOD;
-                break;
-            case '&':
-                token.content.v_operator = OP_AND;
-                break;
-            case '|':
-                token.content.v_operator = OP_OR;
-                break;
-            case '!':
-                token.content.v_operator = OP_NEG;
-                break;
-            case '.':
-                token.content.v_operator = OP_DOT;
-                break;
-            case '?':
-                token.content.v_operator = OP_QM;
-                break;
-            case ':':
-                token.content.v_operator = OP_COLON;
-                break;
-            default:
-                token.content.v_operator = OP_NONE;
-                break;
-        }
-    } else if (len == 2) {
-        switch (strslice[0]) {
-            case '=':
-                if (strslice[1] == '=') {
-                    token.content.v_operator = OP_EQ;
-                } else {
-                    token.content.v_operator = OP_NONE;
-                } 
-                break;
-            case '<':
-                if (strslice[1] == '=') {
-                    token.content.v_operator = OP_LTE;
-                } else if (strslice[1] == '<') {
-                    token.content.v_operator = OP_LSH;
-                } else {
-                    token.content.v_operator = OP_NONE;
-                }
-                break;
-            case '>':
-                if (strslice[1] == '=') {
-                    token.content.v_operator = OP_GTE;
-                } else if (strslice[1] == '>') {
-                    token.content.v_operator = OP_RSH;
-                } else {
-                    token.content.v_operator = OP_NONE;
-                }
-                break;
-            case '^':
-                if (strslice[1] == '=') {
-                    token.content.v_operator = OP_XORASSIGN;
-                } else {
-                    token.content.v_operator = OP_NONE;
-                }
-                break;
-            case '+':
-                if (strslice[1] == '=') {
-                    token.content.v_operator = OP_ADDASSIGN;
-                } else {
-                    token.content.v_operator = OP_NONE;
-                }
-                break;
-            case '-':
-                if (strslice[1] == '=') {
-                    token.content.v_operator = OP_SUBASSIGN;
-                } else if (strslice[1] == '>') {
-                    token.content.v_operator = OP_ARROW;
-                } else {
-                    token.content.v_operator = OP_NONE;
-                }
-                break;
-            case '*':
-                if (strslice[1] == '=') {
-                    token.content.v_operator = OP_MULASSIGN;
-                } else {
-                    token.content.v_operator = OP_NONE;
-                }
-                break;
-            case '/':
-                if (strslice[1] == '=') {
-                    token.content.v_operator = OP_DIVASSIGN;
-                } else {
-                    token.content.v_operator = OP_NONE;
-                }
-                break;
-            case '%':
-                if (strslice[1] == '=') {
-                    token.content.v_operator = OP_MODASSIGN;
-                } else {
-                    token.content.v_operator = OP_NONE;
-                }
-                break;
-            case '&':
-                if (strslice[1] == '=') {
-                    token.content.v_operator = OP_ANDASSIGN;
-                } else if (strslice[1] == '&') {
-                    token.content.v_operator = OP_CMP_AND;
-                } else {
-                    token.content.v_operator = OP_NONE;
-                }
-                break;
-            case '|':
-                if (strslice[1] == '=') {
-                    token.content.v_operator = OP_ORASSIGN;
-                } else if (strslice[1] == '&') {
-                    token.content.v_operator = OP_CMP_OR;
-                } else {
-                    token.content.v_operator = OP_NONE;
-                }
-                break;
-            case '!':
-                if (strslice[1] == '=') {
-                    token.content.v_operator = OP_NEGASSIGN;
-                } else {
-                    token.content.v_operator = OP_NONE;
-                }
-                break;
-            default:
-                token.content.v_operator = OP_NONE;
-                break;
-        }
-    } else if (len == 3) {
-        if (strslice[0] == '<' && strslice[1] == '<' && strslice[2] == '=') {
-            token.content.v_operator = OP_LSHASSIGN;
-        } else if (strslice[0] == '>' && strslice[1] == '>' && strslice[2] == '=') {
-            token.content.v_operator = OP_RSHASSIGN;
-        } else {
-            token.content.v_operator = OP_NONE;
-        }
-    } else {
-        token.content.v_operator = OP_NONE;
-    }
+    token.content.v_operator = operator_from_str(s);
     return token;
 }
 
@@ -389,46 +231,31 @@ struct token_vec tokenizer(char* file, unsigned long len) {
     return token_vec;
 }
 
-void operator_print(enum operator* operator) {
-    if (!operator) return;
-    switch (*operator) {
-        case OP_NONE: break;
-        case OP_ARROW: printf("->"); break;
-        case OP_ASSIGN: printf("="); break;
-        case OP_ADD: printf("+"); break;
-        case OP_SUB: printf("-"); break;
-        case OP_MUL: printf("*"); break;
-        case OP_DIV: printf("/"); break;
-        case OP_MOD: printf("%%"); break;
-        case OP_AND: printf("&"); break;
-        case OP_OR : printf("|"); break;
-        case OP_XOR: printf("^"); break;
-        case OP_NEG: printf("!"); break;
-        case OP_LSH: printf("<<"); break;
-        case OP_RSH: printf(">>"); break;
-        case OP_ADDASSIGN: printf("+="); break;
-        case OP_SUBASSIGN: printf("-="); break;
-        case OP_MULASSIGN: printf("*="); break;
-        case OP_DIVASSIGN: printf("/="); break;
-        case OP_MODASSIGN: printf("%%="); break;
-        case OP_ANDASSIGN: printf("&="); break;
-        case OP_ORASSIGN: printf("|="); break;
-        case OP_XORASSIGN: printf("^="); break;
-        case OP_LSHASSIGN: printf("<<="); break;
-        case OP_RSHASSIGN: printf(">>="); break;
-        
-        case OP_LT: printf("<"); break;
-        case OP_GT: printf(">"); break;
-        case OP_EQ: printf("=="); break;
-        case OP_NEGASSIGN: printf("!="); break;
-        case OP_GTE: printf(">="); break;
-        case OP_LTE: printf("<="); break;
-        case OP_CMP_AND: printf("&&"); break;
-        case OP_CMP_OR: printf("||"); break;
-        case OP_DOT: printf("."); break;
-        case OP_QM: printf("?"); break;
-        case OP_COLON: printf(","); break;
+unsigned long token_as_str_len(struct token *token) {
+    if (!token) {
+        return 0;
     }
+    switch (token->type) {
+        case TOKEN_STRING_QUOTE:
+        case TOKEN_CHAR_QUOTE:
+        case TOKEN_SEMICOLON:
+        case TOKEN_COMMA:
+        case TOKEN_PARAM_OPEN:
+        case TOKEN_PARAM_CLOSE:
+        case TOKEN_BRACE_OPEN:
+        case TOKEN_BRACE_CLOSE:
+        case TOKEN_SQUARE_OPEN:
+        case TOKEN_ENDL:
+        case TOKEN_SQUARE_CLOSE:
+            return 1;
+        case TOKEN_STRING:
+            return token->content.v_string.len;
+        case TOKEN_WHITESPACE:
+            return token->content.v_whitespace;
+        case TOKEN_OPERATOR:
+            return operator_as_str_len(token->content.v_operator);
+    }
+    return 0;
 }
 
 void token_print(struct token* token) {
