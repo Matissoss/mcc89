@@ -4,6 +4,7 @@
  */
 
 #include "lexer.h"
+#include "number.h"
 #include "str.h"
 #include "tokenizer.h"
 #include <stdlib.h>
@@ -14,6 +15,73 @@ enum lstate {
     LS_STRING,
     LS_CHAR
 };
+
+int lexer_token_print(struct lexer_token *self) {
+    unsigned long i;
+    if (!self) return 1;
+    switch (self->type) {
+        case LT_LABEL:
+            printf("Label(");
+            str_t_print(&self->content.v_string);
+            printf(")");
+            break;
+        case LT_NUMBER:
+            printf("Number(");
+            number_print(self->content.v_number);
+            printf(")");
+            break;
+        case LT_KEYWORD:
+            printf("Keyword()");
+            break;
+        case LT_STRING:
+            printf("String(");
+            str_t_print(&self->content.v_string);
+            printf(")");
+            break;
+        case LT_CHAR:
+            printf("Char('%c')", self->content.v_char);
+            break;
+        case LT_OPERATOR:
+            operator_print(&self->content.v_operator);
+            break;
+        case LT_COMMA:
+            printf("Comma");
+            break;
+        case LT_EXPRESSION:
+            printf("Expression(\n");
+            for (i = 0; i < self->content.v_collection.len; i++) {
+                lexer_token_print(&self->content.v_collection.ptr[i]);
+                if (i == self->content.v_collection.len - 1) printf(", ");
+            }
+            printf("\n)");
+            break;
+        case LT_PARAM_CLOSURE:
+            printf("ParamClosure(\n");
+            for (i = 0; i < self->content.v_collection.len; i++) {
+                lexer_token_print(&self->content.v_collection.ptr[i]);
+                if (i == self->content.v_collection.len - 1) printf(", ");
+            }
+            printf("\n)");
+            break;
+        case LT_BRACKET_CLOSURE:
+            printf("BracketClosure(\n");
+            for (i = 0; i < self->content.v_collection.len; i++) {
+                lexer_token_print(&self->content.v_collection.ptr[i]);
+                if (i == self->content.v_collection.len - 1) printf(", ");
+            }
+            printf("\n)");
+            break;
+        case LT_SQUARE_CLOSURE:
+            printf("SquareClosure(\n");
+            for (i = 0; i < self->content.v_collection.len; i++) {
+                lexer_token_print(&self->content.v_collection.ptr[i]);
+                if (i == self->content.v_collection.len - 1) printf(", ");
+            }
+            printf("\n)");
+            break;
+    }
+    return 0;
+}
 
 enum keyword keyword_from_str(str_t str) {
     switch (str.len) {
@@ -65,18 +133,39 @@ struct lexer_token_vec lexer(str_t raw_file, struct token_vec *tokens) {
         ctoken = &tokens->ptr[send];
         switch (ctoken->type) {
             /* TODO */
+            case TOKEN_BACKSLASH:
+                is_escape = 1;
+                break;
+            case TOKEN_STRING:
+                if (state == LS_NONE) {
+                    lexer_token.type = LT_LABEL;
+                    lexer_token.content.v_label.ptr = raw_file.ptr + rf_offset;
+                    lexer_token.content.v_label.len = ctoken->content.v_string.len;
+                    lexer_token_vec_push(&ltoken_vec, &lexer_token);
+                }
+                break;
             case TOKEN_STRING_QUOTE:
-                if (!is_escape && state == LS_STRING) {
+                if (is_escape == 1) {
+                    is_escape = 0;
+                    break;
+                }
+                if (state == LS_STRING) {
                     lexer_token.type = LT_STRING;
-                    rf_slice_len = 0;
-                    for (i = sstart; i < send; i++) {
+                    rf_slice_len = 1;
+                    for (i = sstart + 1; i < send; i++) {
                         rf_slice_len += token_as_str_len(&tokens->ptr[i]);
                     }
                     lexer_token.type = LT_STRING;
-                    lexer_token.content.v_string.ptr = raw_file.ptr + rf_offset;
-                    lexer_token.content.v_string.len = rf_slice_len;
+                    lexer_token.content.v_string.ptr = raw_file.ptr 
+                        + rf_offset 
+                        - rf_slice_len 
+                        + 1;
+                    lexer_token.content.v_string.len = rf_slice_len - 1;
                     lexer_token_vec_push(&ltoken_vec, &lexer_token);
                     state = LS_NONE;
+                } else if (state == LS_NONE) {
+                    state = LS_STRING;
+                    sstart = send;
                 }
                 break;
             default: break;

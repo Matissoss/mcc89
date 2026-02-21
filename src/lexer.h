@@ -8,6 +8,7 @@
 
 #include "str.h"
 #include "tokenizer.h"
+#include "number.h"
 
 enum keyword {
     K_NONE,
@@ -16,37 +17,6 @@ enum keyword {
 	K_FOR,
 	K_ELSE,
 	K_RETURN
-};
-
-enum number_type {
-	N_F64,
-	N_F32,
-	
-	N_U64,
-	N_U32,
-	N_U16,
-	N_U8,
-	
-	N_I64,
-	N_I32,
-	N_I16,
-	I_I8
-};
-
-struct number {
-	enum number_type type;
-	union {
-		double v_f64;
-		float v_f32;
-		unsigned long v_u64;
-		unsigned int v_u32;
-		unsigned short v_u16;
-		unsigned char v_u8;
-		long v_i64;
-		int v_i32;
-		short v_i16;
-		char v_i8;
-	} content;
 };
 
 enum lexer_token_type {
@@ -90,6 +60,7 @@ struct lexer_token {
 		struct number v_number;
 		str_t v_label;
 		str_t v_string;
+        char v_char;
 		enum keyword v_keyword;
 		
 		long is_some;
@@ -99,6 +70,7 @@ struct lexer_token {
 enum keyword keyword_from_str(str_t str);
 
 struct lexer_token_vec lexer(str_t raw_file, struct token_vec *tokens);
+int lexer_token_print(struct lexer_token* self);
 
 int lexer_token_free(struct lexer_token* self);
 int lexer_token_vec_free(struct lexer_token_vec* self);

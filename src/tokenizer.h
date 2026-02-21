@@ -22,6 +22,9 @@ enum token_type {
 	TOKEN_STRING_QUOTE,  /* " */
 	TOKEN_CHAR_QUOTE,   /* ' */
 
+    /* \\ */
+    TOKEN_BACKSLASH,
+
 	TOKEN_COMMA, /* , */
 	TOKEN_SEMICOLON, /* ; */
 	

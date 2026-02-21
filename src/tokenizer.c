@@ -32,7 +32,7 @@ static struct token operator(char* strslice, unsigned long len) {
 struct token_vec tokenizer(char* file, unsigned long len) {
     struct token_vec token_vec = {0};
     struct token token = {0};
-    unsigned long i, j, strs = 0;
+    unsigned long i, j, strs = 0, x = 0;
     enum current_type current_type = CT_NONE;
     for (i = 0; i < len; i++) {
         if (file[i] == '\n') {
@@ -47,10 +47,15 @@ struct token_vec tokenizer(char* file, unsigned long len) {
                     token_vec_push(&token_vec, token);
                     strs = i + 1;
                 } else if (current_type == CT_OTHER) {
+                    x = 1;
                     for (j = strs; j < i; j++) {
-                        token = operator(file + j, i - j);
+                        token = operator(file + j, x);
                         if (token.content.v_operator == OP_NONE) {
+                            x++;
                             switch (file[j]) {
+                                case '\\':
+                                    token.type = TOKEN_BACKSLASH;
+                                    break;
                                 case '{':
                                     token.type = TOKEN_BRACE_OPEN;
                                     break;
@@ -85,6 +90,7 @@ struct token_vec tokenizer(char* file, unsigned long len) {
                             if (token.type != TOKEN_OPERATOR) token_vec_push(&token_vec, token);
                         } else {
                             token_vec_push(&token_vec, token);
+                            x = 1;
                         }
                     }
                     strs = i + 1;
@@ -109,10 +115,15 @@ struct token_vec tokenizer(char* file, unsigned long len) {
                 token_vec_push(&token_vec, token);
                 strs = i;
             } else if (current_type == CT_OTHER) {
+                x = 1;
                 for (j = strs; j < i; j++) {
-                    token = operator(file + j, i - j);
+                    token = operator(file + j, x);
                     if (token.content.v_operator == OP_NONE) {
+                        x++;
                         switch (file[j]) {
+                            case '\\':
+                                token.type = TOKEN_BACKSLASH;
+                                break;
                             case '{':
                                 token.type = TOKEN_BRACE_OPEN;
                                 break;
@@ -147,6 +158,7 @@ struct token_vec tokenizer(char* file, unsigned long len) {
                         if (token.type != TOKEN_OPERATOR) token_vec_push(&token_vec, token);
                     } else {
                         token_vec_push(&token_vec, token);
+                        x = 1;
                     }
                 }
                 strs = i;
@@ -165,10 +177,15 @@ struct token_vec tokenizer(char* file, unsigned long len) {
                 token_vec_push(&token_vec, token);
                 strs = i;
             } else if (current_type == CT_OTHER) {
+                x = 1;
                 for (j = strs; j < i; j++) {
-                    token = operator(file + j, i - j);
+                    token = operator(file + j, x);
                     if (token.content.v_operator == OP_NONE) {
+                        x++;
                         switch (file[j]) {
+                            case '\\':
+                                token.type = TOKEN_BACKSLASH;
+                                break;
                             case '{':
                                 token.type = TOKEN_BRACE_OPEN;
                                 break;
@@ -203,6 +220,7 @@ struct token_vec tokenizer(char* file, unsigned long len) {
                         if (token.type != TOKEN_OPERATOR) token_vec_push(&token_vec, token);
                     } else {
                         token_vec_push(&token_vec, token);
+                        x = 1;
                     }
                 }
                 strs = i;
@@ -236,6 +254,7 @@ unsigned long token_as_str_len(struct token *token) {
         return 0;
     }
     switch (token->type) {
+        case TOKEN_BACKSLASH:
         case TOKEN_STRING_QUOTE:
         case TOKEN_CHAR_QUOTE:
         case TOKEN_SEMICOLON:
@@ -261,6 +280,7 @@ unsigned long token_as_str_len(struct token *token) {
 void token_print(struct token* token) {
     if (!token) return;
     switch (token->type) {
+        case TOKEN_BACKSLASH: printf("Backslash"); break;
         case TOKEN_STRING:
             printf("String(\"");
             str_t_print(&token->content.v_string);
