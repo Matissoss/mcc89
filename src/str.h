@@ -8,6 +8,6 @@ typedef struct str {
     unsigned long len;
 } str_t;
 
-int str_t_print(str_t* self);
+int str_t_print(str_t *self);
 
 #endif

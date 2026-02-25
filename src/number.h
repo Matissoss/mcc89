@@ -41,7 +41,27 @@ struct number {
 	} content;
 };
 
+enum number_error {
+    NERROR_NUMBER_TOO_LARGE,
+    NERROR_INVALID_DIGIT
+};
+
+struct number_result {
+    unsigned char is_ok;
+    union {
+        enum number_error v_error;
+        struct number v_number;
+    } content;
+};
+
 struct number number_from_str(str_t str);
 int number_print(struct number self);
+
+struct nubmer_result number_from_oct(str_t str, unsigned char is_minus);
+struct number_result number_from_hex(str_t str, unsigned char is_minus);
+struct number_result number_from_bin(str_t str, unsigned char is_minus);
+struct number_result number_float_from_str(str_t str, unsigned char is_minus);
+
+char number_digit_from_hex_char(char hexd);
 
 #endif
